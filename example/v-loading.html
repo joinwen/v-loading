@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="../dist/v-loading.umd.js"></script>
+  <title>Example</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+    .content {
+      line-height: 2;
+      text-align: center;
+      padding: 1em;
+    }
+  </style>
+</head>
+<body>
+<div class="wrapped">
+  <div class="content">
+    <p>作词 : 黄伟文</p><p>作曲 : 陈辉阳</p><p>编曲 : 陈辉阳/罗尚正</p><p>作词：黄伟文</p>
+    <p>作曲：陈辉阳</p><p>编曲：Ted Lo/陈辉阳</p><p>监制：陈辉阳</p><p>如果我是半张废纸</p><p>让我 化蝶</p><p>如果我是个空罐子</p><p>为你 铁了心</p><p>被你浪费 被你活埋</p>
+    <p>让你愉快 让我瓦解</p><p>为你盛放 颓废中 那媚态</p><p>留我做个垃圾</p><p>长留恋于你家</p><p>从沉溺中结疤 再发芽</p><p>情爱就似垃圾</p>
+    <p>残骸虽会腐化庭园中最后也 开满花</p><p>被世界遗弃 不可怕</p><p>喜欢你 有时还可怕</p><p>没法再做那些牵挂</p>
+    <p>比不上 在你手中火化</p><p>不需要 完美得可怕</p><p>太快乐 如何招架</p><p>残忍不好吗</p><p>留我做个垃圾</p><p>长留恋于你家</p><p>从沉溺中结疤 再发芽</p><p>情爱就似垃圾</p>
+    <p>残骸虽会腐化庭园中最后也 开满花</p><p>被世界遗弃 不可怕</p><p>喜欢你 有时还可怕</p><p>没法再做那些牵挂</p>
+    <p>比不上 在你手中火化</p><p>不需要 完美得可怕</p><p>太快乐 如何招架</p><p>残忍不好吗</p><p>被世界遗弃 不可怕</p><p>喜欢你 有时还可怕</p>
+    <p>没法再做那些牵挂</p><p>比不上 在你手中火化</p><p>不需要 完美得可怕</p><p>太快乐 如何招架</p><p>残忍不好吗</p><p>灰烬里 被彻底消化</p><p>我以后 全无牵挂</p><p>什么都不怕</p><p>
+  </div>
+  <script>
+    let ele = document.querySelector(".wrapped"),
+      content = document.querySelector(".content"),
+      loading = document.querySelector(".loading");
+    new VL(document.documentElement,{
+      loading: loading,
+      max: 80,
+      bg: "#69aef1",
+      cb: (fn) => {
+        setTimeout(() => {
+          let html = content.innerHTML;
+          content.innerHTML = `${Date.now()}-` + html;
+          fn();
+        },1000)
+      }
+    })
+  </script>
+</div>
+</body>
+</html>
