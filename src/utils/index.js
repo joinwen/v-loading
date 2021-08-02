@@ -7,7 +7,7 @@ const getStyle = (ele, attr) => {
   return document.defaultView.getComputedStyle(ele)[attr];
 }
 
-const clearBorder = (ele, duration = 600) => {
+const clearBorder = (ele, data, duration = 600) => {
   setStyle(ele, {
     "borderBottom": "0 solid transparent",
     "transition": `border-bottom ${duration}ms`
@@ -15,11 +15,12 @@ const clearBorder = (ele, duration = 600) => {
   setTimeout(() => {
     setStyle(ele, {
       "transition": "none"
-    })
+    });
+    (data) && (data.phase = -1);
   }, duration)
 }
 
-const clearHeight = (ele, duration = 600) => {
+const clearHeight = (ele, data, duration = 600) => {
   let color = getStyle(ele, "backgroundColor");
   setStyle(ele, {
     height: "0",
@@ -29,7 +30,8 @@ const clearHeight = (ele, duration = 600) => {
   setTimeout(() => {
     setStyle(ele, {
       "transition": "none"
-    })
+    });
+    (data) && (data.phase = -1);
   }, duration)
 }
 

@@ -947,8 +947,8 @@
     return document.defaultView.getComputedStyle(ele)[attr];
   };
 
-  var clearBorder = function clearBorder(ele) {
-    var duration = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 600;
+  var clearBorder = function clearBorder(ele, data) {
+    var duration = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 600;
     setStyle(ele, {
       "borderBottom": "0 solid transparent",
       "transition": "border-bottom ".concat(duration, "ms")
@@ -958,11 +958,12 @@
       setStyle(ele, {
         "transition": "none"
       });
+      data && (data.phase = -1);
     }, duration);
   };
 
-  var clearHeight = function clearHeight(ele) {
-    var duration = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 600;
+  var clearHeight = function clearHeight(ele, data) {
+    var duration = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 600;
     var color = getStyle(ele, "backgroundColor");
     setStyle(ele, {
       height: "0",
@@ -974,6 +975,7 @@
       setStyle(ele, {
         "transition": "none"
       });
+      data && (data.phase = -1);
     }, duration);
   };
 
@@ -1028,17 +1030,45 @@
     duration: 250
   };
 
+  var updateDataInStart = function updateDataInStart(data, e, options) {
+    data.start = e.touches[0].pageY;
+    data.phase === -1 && (data.phase = 0);
+  };
+
+  var updateDataInMove = function updateDataInMove(data, e, options) {
+    var move = e.touches[0].pageY,
+        start = data.start,
+        ele = options.ele;
+    data.phase === 0 && (data.phase = 1);
+
+    if (data.phase === 1) {
+      data.y = move - start;
+      data.positive = data.y >= 0;
+      data.negative = !data.positive;
+      data.top = ele.scrollTop === 0;
+      data.bottom = ele.scrollTop + ele.clientHeight === ele.scrollHeight;
+    }
+  };
+
   var VLoading = /*#__PURE__*/function () {
     function VLoading(ele, options) {
       _classCallCheck(this, VLoading);
 
       this.ele = ele;
-      this.options = assign(defaultOptions, options);
+      this.options = assign(defaultOptions, options, {
+        ele: ele
+      });
       this.data = {
+        top: false,
+        // 是否触顶
+        bottom: false,
+        // 是否触底
         y: 0,
+        // 路程位移
         start: 0,
-        move: false,
-        ing: false
+        // 起点位移
+        phase: -1 // 0:touchstart, 1:touchmove, 2:touchend/cancel, -1, no events
+
       };
       this.insertLoading();
       this.init();
@@ -1057,6 +1087,8 @@
     }, {
       key: "init",
       value: function init() {
+        var _this = this;
+
         var ele = this.ele,
             data = this.data,
             loading = this.options.loading,
@@ -1069,21 +1101,24 @@
             stage1End = this.options.stage1End,
             stage2End = this.options.stage1End;
         ele.addEventListener("touchstart", function (e) {
-          if (data.ing) return;
-          data.move = true;
-          data.start = e.touches[0].pageY;
+          updateDataInStart(data, e, _this.options); // if(data.ing)
+          //   return;
+          // data.move = true;
+          // data.start = e.touches[0].pageY;
         });
         ele.addEventListener("touchmove", function (e) {
-          if (!data.move) return;
-          var move = e.touches[0].pageY,
-              deltaY = move - data.start;
+          updateDataInMove(data, e, _this.options);
 
-          if (ele.scrollTop === 0) {
-            if (deltaY > 0 || data.ing) e.preventDefault();
-            var y = data.y = deltaY;
+          if (data.phase !== 1) {
+            e.preventDefault();
+            return;
+          }
+
+          if (data.top) {
+            if (data.positive) e.preventDefault();
+            var y = data.y;
 
             if (y >= max) {
-              // y = y < (max + 100) ? (y - max) / 4 : (y-max)/2;
               y = (y - max) / 2;
               stage2Begin(loading);
               setBorder(loading, y, bg);
@@ -1091,30 +1126,62 @@
               stage1Begin(loading);
               setHeight(loading, y, bg);
             }
-          }
+          } // if(!data.move)
+          //   return;
+          // let move = e.touches[0].pageY,
+          //   deltaY = move - data.start;
+          // if(ele.scrollTop === 0) {
+          //   if(deltaY > 0 || data.ing)
+          //     e.preventDefault();
+          //   let y = data.y = deltaY
+          //   if(y >= max) {
+          //     // y = y < (max + 100) ? (y - max) / 4 : (y-max)/2;
+          //     y = (y - max) / 2;
+          //     stage2Begin(loading);
+          //     setBorder(loading, y, bg);
+          //   } else {
+          //     stage1Begin(loading);
+          //     setHeight(loading, y, bg);
+          //   }
+          // }
+
         }, {
           passive: false
         });
         ele.addEventListener("touchend", function (e) {
-          var y = data.y,
-              move = data.move;
+          if (data.phase !== 1) return;
+          var y = data.y;
+              data.phase;
           data.start = data.y = 0;
-          data.move = false;
-          if (!move) return;
+          data.phase = 2;
 
           if (y > max) {
-            clearBorder(loading, duration);
+            clearBorder(loading, null, duration);
             cb(function () {
               stage2End(loading);
-              clearHeight(loading, duration);
-              data.ing = false;
+              clearHeight(loading, data, duration);
             });
           } else {
             stage1End(loading);
-            data.ing = false;
-            clearBorder(loading, duration);
-            clearHeight(loading, duration);
-          }
+            data.phase = -1;
+            clearBorder(loading, data, duration);
+            clearHeight(loading, data, duration);
+          } // let y = data.y,
+          //   move = data.move;
+          // data.start = data.y = 0;
+          // data.move = false;
+          // if(!move)
+          //   return;
+          // if(y > max) {
+          //   clearBorder(loading, duration);
+          //   cb(() => {stage2End(loading);clearHeight(loading, duration);data.ing = false;});
+          // } else {
+          //   stage1End(loading);
+          //   data.ing = false;
+          //   clearBorder(loading, duration);
+          //   clearHeight(loading, duration);
+          // }
+
         });
         ele.addEventListener("touchcancel", function (e) {});
       }
