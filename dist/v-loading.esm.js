@@ -61,9 +61,11 @@ const setHeight = (ele, obj, color ="#f0f0f0") => {
 const defaultOptions = {
   time: 300,
   max: 80,
+  bottomHeight: 32,
   bg: "#f0f0f0",
-  cb: () => {},
-  stage1Begin: (ele, obj) => {
+  t_cb: () => {},
+  b_cb: () => {},
+  t_stage1Begin: (ele, obj) => {
     // eslint-disable-next-line no-unused-vars
     let { y, bg } = obj;
     setStyle(ele, {
@@ -74,12 +76,12 @@ const defaultOptions = {
     });
   },
   // eslint-disable-next-line no-unused-vars
-  stage2Begin: (ele, obj) => {
+  t_stage2Begin: (ele, obj) => {
     setStyle(ele, {
       text: "松开刷新"
     });
   },
-  stage1End: (ele, flag) => {
+  t_stage1End: (ele, flag) => {
     if(flag) {
       setStyle(ele, {
         text: "刷新成功"
@@ -91,18 +93,49 @@ const defaultOptions = {
       });
     }
   },
-  stage2End: (ele) => {
+  t_stage1QuickEnd: (ele) => {},
+  t_stage2End: (ele) => {
     setStyle(ele, {
       text: "刷新中..."
     });
   },
-  stage2: () => {},
+  b_stage1Begin: (ele, y) => {
+    setStyle(ele, {
+      lineHeight: `${y}px`,
+      height: `${y}px`,
+      textAlign: "center",
+      visibility: "hidden",
+    });
+  },
+  b_stage2Begin: (ele) => {
+    setStyle(ele, {
+      text: "上拉加载",
+      visibility: "visible"
+    });
+  },
+  b_stage1End: (ele) => {
+    setStyle(ele, {
+      text: "加载中..."
+    });
+  },
+  b_stage2End: (ele, flag) => {
+    if(flag) {
+      setStyle(ele, {
+        text: "加载成功",
+      });
+    } else {
+      setStyle(ele, {
+        text: "加载失败"
+      });
+    }
+  },
   duration: 250,
 };
 
 const updateDataInStart = (data, e, options) => {
   let ele = options.ele,
-  [top, bottom] = topAndBottom(ele);
+    bottomHeight = options.bottomHeight,
+    [top, bottom] = topAndBottom(ele, bottomHeight);
   if(data.phase === -1 && (top || bottom)) {
     data.start = e.touches[0].pageY;
     data.phase = 0;
@@ -114,7 +147,8 @@ const updateDataInMove = (data, e, options) => {
   let move = e.touches[0].pageY,
     start = data.start,
     ele = options.ele,
-    [top, bottom] = topAndBottom(ele),
+    bottomHeight = options.bottomHeight,
+    [top, bottom] = topAndBottom(ele, bottomHeight),
     y = move - start,
     positive = y >= 0,
     negative = y <= 0;
@@ -128,32 +162,21 @@ const updateDataInMove = (data, e, options) => {
       data.bottom = bottom;
     }
   }
-
-  // (data.phase === 0) && (data.phase = 1);
-  // if(data.phase === 1) {
-  //   data.y = move - start;
-  //   data.positive = data.y >= 0;
-  //   data.negative = !data.positive;
-  //   data.top = ele.scrollTop === 0;
-  //   data.bottom = ele.scrollTop + ele.clientHeight === ele.scrollHeight;
-  // }
 };
 
 const updateDataInCancel = (data, e, options) => {
-  // if(data.top || data.bottom) {
-  //   (data.phase === 1) && (data.phase = 2)
-  // }
   let ele = options.ele,
-    [top, bottom ] = topAndBottom(ele);
+    bottomHeight = options.bottomHeight,
+    [top, bottom ] = topAndBottom(ele, bottomHeight);
   data.top = top;
   data.bottom = bottom;
 };
 
-const topAndBottom = (ele) => {
+const topAndBottom = (ele, bottomHeight) => {
   return [
     ele.scrollTop === 0,
-    ele.scrollTop + ele.clientHeight >= ele.scrollHeight
-  ]
+    ele.scrollTop + ele.clientHeight >= (ele.scrollHeight - bottomHeight)
+  ];
 };
 
 class VLoading {
@@ -184,34 +207,36 @@ class VLoading {
     this.options.topLoading = div;
   }
   insertBottomLoading() {
-    const bottomLoading = this.options.bottomLoading;
+    const bottomLoading = this.options.bottomLoading,
+      bottomHeight = this.options.bottomHeight,
+      b_stage1Begin = this.options.b_stage1Begin;
     if(bottomLoading)
       return;
     let lastNode = this.ele.lastElementChild,
       div = document.createElement("div");
-    div.innerText = "上拉加载中...";
-    setStyle(div, {
-      lineHeight: 2,
-      textAlign: "center",
-      visibility: "hidden"
-    });
     this.ele.insertBefore(div, lastNode.nextSibling);
     this.options.bottomLoading = div;
+    b_stage1Begin(div, bottomHeight);
   }
   init() {
     let ele = this.ele,
       data = this.data,
       topLoading = this.options.topLoading,
       bottomLoading = this.options.bottomLoading,
-      cb = this.options.cb,
+      t_cb = this.options.t_cb,
+      b_cb = this.options.b_cb,
       max = this.options.max,
       bg = this.options.bg,
       time = this.options.time,
       duration = this.options.duration,
-      stage1Begin = this.options.stage1Begin,
-      stage2Begin = this.options.stage2Begin,
-      stage1End = this.options.stage1End,
-      stage2End = this.options.stage2End;
+      t_stage1Begin = this.options.t_stage1Begin,
+      t_stage2Begin = this.options.t_stage2Begin,
+      t_stage1End = this.options.t_stage1End,
+      t_stage1QuickEnd = this.options.t_stage1QuickEnd,
+      t_stage2End = this.options.t_stage2End,
+      b_stage2Begin = this.options.b_stage2Begin,
+      b_stage1End = this.options.b_stage1End,
+      b_stage2End = this.options.b_stage2End;
     window.data = data;
     ele.addEventListener("touchstart", (e) => {
       updateDataInStart(data, e, this.options);
@@ -235,19 +260,16 @@ class VLoading {
         if(y >= max) {
           y = (y - max) / 2;
           setBorder(topLoading, { y, bg });
-          stage2Begin(topLoading, { y, bg });
+          t_stage2Begin(topLoading, { y, bg });
         } else {
           setHeight(topLoading, { y, bg });
-          stage1Begin(topLoading, { y, bg });
+          t_stage1Begin(topLoading, { y, bg });
         }
       }
       if(data.bottom) {
-        setStyle(bottomLoading, {
-          visibility: "visible"
-        });
+        e.preventDefault();
+        b_stage2Begin(bottomLoading);
       }
-
-      // }
     }, {passive: false});
     ele.addEventListener("touchend", (e) => {
       updateDataInCancel(data, e, this.options);
@@ -261,26 +283,34 @@ class VLoading {
           let y = data.y;
           if(y > max) {
             clearBorder(topLoading,null, duration);
-            stage2End(topLoading);
-            cb(
+            t_stage2End(topLoading);
+            t_cb(
               (flag) => {
-                stage1End(topLoading,flag);
+                t_stage1End(topLoading,flag);
                 setTimeout(() => {
                   clearHeight(topLoading, data, duration);
                 }, time);
               }
             );
           } else {
-            // stage1End(topLoading);
+            t_stage1QuickEnd(topLoading);
             clearBorder(topLoading, data, duration);
             clearHeight(topLoading, data, duration);
           }
         }
         if(data.bottom) {
-          setStyle(bottomLoading, {
-            visibility: "hidden"
+          b_stage1End(bottomLoading);
+          b_cb((flag) => {
+            b_stage2End(bottomLoading, flag);
+            if(flag) {
+              setTimeout(() => {
+                setStyle(bottomLoading, {
+                  visibility: "hidden"
+                });
+              }, time);
+            }
+            data.phase = -1;
           });
-          data.phase = -1;
         }
       }
     });

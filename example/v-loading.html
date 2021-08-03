@@ -16,6 +16,7 @@
       line-height: 2;
       text-align: center;
       padding: 1em;
+      color: #909399;
     }
   </style>
 </head>
@@ -34,16 +35,31 @@
   <script>
     let ele = document.querySelector(".wrapped"),
       content = document.querySelector(".content"),
-      loading = document.querySelector(".loading");
+      loading = document.querySelector(".loading"),
+      i = -1,
+      html = content.innerHTML;
     new VL(document.documentElement,{
       topLoading: loading,
       max: 80,
-      cb: (fn) => {
+      t_cb: (fn) => {
+        let colors = ["#409eff","#909399"],
+          flag = false;
         setTimeout(() => {
-          let html = content.innerHTML;
-          content.innerHTML = `${Date.now()}-` + html;
-          fn();
+          i = ++i % 2;
+          flag = i === 0;
+          content.style.color = colors[i];
+          fn(flag);
         },2000)
+      },
+      b_cb: (fn) => {
+        setTimeout(() => {
+          if(Math.random()*10 > 5) {
+            content.innerHTML += html;
+            fn(true);
+          } else {
+            fn(false);
+          }
+        }, 2000);
       }
     })
   </script>

@@ -2253,9 +2253,11 @@
   var defaultOptions = {
     time: 300,
     max: 80,
+    bottomHeight: 32,
     bg: "#f0f0f0",
-    cb: function cb() {},
-    stage1Begin: function stage1Begin(ele, obj) {
+    t_cb: function t_cb() {},
+    b_cb: function b_cb() {},
+    t_stage1Begin: function t_stage1Begin(ele, obj) {
       // eslint-disable-next-line no-unused-vars
       var y = obj.y;
           obj.bg;
@@ -2267,12 +2269,12 @@
       });
     },
     // eslint-disable-next-line no-unused-vars
-    stage2Begin: function stage2Begin(ele, obj) {
+    t_stage2Begin: function t_stage2Begin(ele, obj) {
       setStyle(ele, {
         text: "松开刷新"
       });
     },
-    stage1End: function stage1End(ele, flag) {
+    t_stage1End: function t_stage1End(ele, flag) {
       if (flag) {
         setStyle(ele, {
           text: "刷新成功"
@@ -2284,12 +2286,42 @@
         });
       }
     },
-    stage2End: function stage2End(ele) {
+    t_stage1QuickEnd: function t_stage1QuickEnd(ele) {},
+    t_stage2End: function t_stage2End(ele) {
       setStyle(ele, {
         text: "刷新中..."
       });
     },
-    stage2: function stage2() {},
+    b_stage1Begin: function b_stage1Begin(ele, y) {
+      setStyle(ele, {
+        lineHeight: "".concat(y, "px"),
+        height: "".concat(y, "px"),
+        textAlign: "center",
+        visibility: "hidden"
+      });
+    },
+    b_stage2Begin: function b_stage2Begin(ele) {
+      setStyle(ele, {
+        text: "上拉加载",
+        visibility: "visible"
+      });
+    },
+    b_stage1End: function b_stage1End(ele) {
+      setStyle(ele, {
+        text: "加载中..."
+      });
+    },
+    b_stage2End: function b_stage2End(ele, flag) {
+      if (flag) {
+        setStyle(ele, {
+          text: "加载成功"
+        });
+      } else {
+        setStyle(ele, {
+          text: "加载失败"
+        });
+      }
+    },
     duration: 250
   };
 
@@ -2601,7 +2633,8 @@
 
   var updateDataInStart = function updateDataInStart(data, e, options) {
     var ele = options.ele,
-        _topAndBottom = topAndBottom(ele),
+        bottomHeight = options.bottomHeight,
+        _topAndBottom = topAndBottom(ele, bottomHeight),
         _topAndBottom2 = _slicedToArray(_topAndBottom, 2),
         top = _topAndBottom2[0],
         bottom = _topAndBottom2[1];
@@ -2618,7 +2651,8 @@
     var move = e.touches[0].pageY,
         start = data.start,
         ele = options.ele,
-        _topAndBottom3 = topAndBottom(ele),
+        bottomHeight = options.bottomHeight,
+        _topAndBottom3 = topAndBottom(ele, bottomHeight),
         _topAndBottom4 = _slicedToArray(_topAndBottom3, 2),
         top = _topAndBottom4[0],
         bottom = _topAndBottom4[1],
@@ -2635,23 +2669,13 @@
         data.top = top;
         data.bottom = bottom;
       }
-    } // (data.phase === 0) && (data.phase = 1);
-    // if(data.phase === 1) {
-    //   data.y = move - start;
-    //   data.positive = data.y >= 0;
-    //   data.negative = !data.positive;
-    //   data.top = ele.scrollTop === 0;
-    //   data.bottom = ele.scrollTop + ele.clientHeight === ele.scrollHeight;
-    // }
-
+    }
   };
 
   var updateDataInCancel = function updateDataInCancel(data, e, options) {
-    // if(data.top || data.bottom) {
-    //   (data.phase === 1) && (data.phase = 2)
-    // }
     var ele = options.ele,
-        _topAndBottom5 = topAndBottom(ele),
+        bottomHeight = options.bottomHeight,
+        _topAndBottom5 = topAndBottom(ele, bottomHeight),
         _topAndBottom6 = _slicedToArray(_topAndBottom5, 2),
         top = _topAndBottom6[0],
         bottom = _topAndBottom6[1];
@@ -2660,8 +2684,8 @@
     data.bottom = bottom;
   };
 
-  var topAndBottom = function topAndBottom(ele) {
-    return [ele.scrollTop === 0, ele.scrollTop + ele.clientHeight >= ele.scrollHeight];
+  var topAndBottom = function topAndBottom(ele, bottomHeight) {
+    return [ele.scrollTop === 0, ele.scrollTop + ele.clientHeight >= ele.scrollHeight - bottomHeight];
   };
 
   var VLoading = /*#__PURE__*/function () {
@@ -2705,18 +2729,15 @@
     }, {
       key: "insertBottomLoading",
       value: function insertBottomLoading() {
-        var bottomLoading = this.options.bottomLoading;
+        var bottomLoading = this.options.bottomLoading,
+            bottomHeight = this.options.bottomHeight,
+            b_stage1Begin = this.options.b_stage1Begin;
         if (bottomLoading) return;
         var lastNode = this.ele.lastElementChild,
             div = document.createElement("div");
-        div.innerText = "上拉加载中...";
-        setStyle(div, {
-          lineHeight: 2,
-          textAlign: "center",
-          visibility: "hidden"
-        });
         this.ele.insertBefore(div, lastNode.nextSibling);
         this.options.bottomLoading = div;
+        b_stage1Begin(div, bottomHeight);
       }
     }, {
       key: "init",
@@ -2727,15 +2748,20 @@
             data = this.data,
             topLoading = this.options.topLoading,
             bottomLoading = this.options.bottomLoading,
-            cb = this.options.cb,
+            t_cb = this.options.t_cb,
+            b_cb = this.options.b_cb,
             max = this.options.max,
             bg = this.options.bg,
             time = this.options.time,
             duration = this.options.duration,
-            stage1Begin = this.options.stage1Begin,
-            stage2Begin = this.options.stage2Begin,
-            stage1End = this.options.stage1End,
-            stage2End = this.options.stage2End;
+            t_stage1Begin = this.options.t_stage1Begin,
+            t_stage2Begin = this.options.t_stage2Begin,
+            t_stage1End = this.options.t_stage1End,
+            t_stage1QuickEnd = this.options.t_stage1QuickEnd,
+            t_stage2End = this.options.t_stage2End,
+            b_stage2Begin = this.options.b_stage2Begin,
+            b_stage1End = this.options.b_stage1End,
+            b_stage2End = this.options.b_stage2End;
         window.data = data;
         ele.addEventListener("touchstart", function (e) {
           updateDataInStart(data, e, _this.options);
@@ -2763,7 +2789,7 @@
                 y: y,
                 bg: bg
               });
-              stage2Begin(topLoading, {
+              t_stage2Begin(topLoading, {
                 y: y,
                 bg: bg
               });
@@ -2772,7 +2798,7 @@
                 y: y,
                 bg: bg
               });
-              stage1Begin(topLoading, {
+              t_stage1Begin(topLoading, {
                 y: y,
                 bg: bg
               });
@@ -2780,11 +2806,9 @@
           }
 
           if (data.bottom) {
-            setStyle(bottomLoading, {
-              visibility: "visible"
-            });
-          } // }
-
+            e.preventDefault();
+            b_stage2Begin(bottomLoading);
+          }
         }, {
           passive: false
         });
@@ -2804,26 +2828,36 @@
 
               if (y > max) {
                 clearBorder(topLoading, null, duration);
-                stage2End(topLoading);
-                cb(function (flag) {
-                  stage1End(topLoading, flag);
+                t_stage2End(topLoading);
+                t_cb(function (flag) {
+                  t_stage1End(topLoading, flag);
 
                   setTimeout(function () {
                     clearHeight(topLoading, data, duration);
                   }, time);
                 });
               } else {
-                // stage1End(topLoading);
+                t_stage1QuickEnd(topLoading);
                 clearBorder(topLoading, data, duration);
                 clearHeight(topLoading, data, duration);
               }
             }
 
             if (data.bottom) {
-              setStyle(bottomLoading, {
-                visibility: "hidden"
+              b_stage1End(bottomLoading);
+              b_cb(function (flag) {
+                b_stage2End(bottomLoading, flag);
+
+                if (flag) {
+                  setTimeout(function () {
+                    setStyle(bottomLoading, {
+                      visibility: "hidden"
+                    });
+                  }, time);
+                }
+
+                data.phase = -1;
               });
-              data.phase = -1;
             }
           }
         });

@@ -40,34 +40,36 @@ class VLoading {
     this.options.topLoading = div;
   }
   insertBottomLoading() {
-    const bottomLoading = this.options.bottomLoading;
+    const bottomLoading = this.options.bottomLoading,
+      bottomHeight = this.options.bottomHeight,
+      b_stage1Begin = this.options.b_stage1Begin;
     if(bottomLoading)
       return;
     let lastNode = this.ele.lastElementChild,
       div = document.createElement("div");
-    div.innerText = "上拉加载中...";
-    setStyle(div, {
-      lineHeight: 2,
-      textAlign: "center",
-      visibility: "hidden"
-    });
     this.ele.insertBefore(div, lastNode.nextSibling);
     this.options.bottomLoading = div;
+    b_stage1Begin(div, bottomHeight);
   }
   init() {
     let ele = this.ele,
       data = this.data,
       topLoading = this.options.topLoading,
       bottomLoading = this.options.bottomLoading,
-      cb = this.options.cb,
+      t_cb = this.options.t_cb,
+      b_cb = this.options.b_cb,
       max = this.options.max,
       bg = this.options.bg,
       time = this.options.time,
       duration = this.options.duration,
-      stage1Begin = this.options.stage1Begin,
-      stage2Begin = this.options.stage2Begin,
-      stage1End = this.options.stage1End,
-      stage2End = this.options.stage2End;
+      t_stage1Begin = this.options.t_stage1Begin,
+      t_stage2Begin = this.options.t_stage2Begin,
+      t_stage1End = this.options.t_stage1End,
+      t_stage1QuickEnd = this.options.t_stage1QuickEnd,
+      t_stage2End = this.options.t_stage2End,
+      b_stage2Begin = this.options.b_stage2Begin,
+      b_stage1End = this.options.b_stage1End,
+      b_stage2End = this.options.b_stage2End;
     window.data = data;
     ele.addEventListener("touchstart", (e) => {
       updateDataInStart(data, e, this.options);
@@ -91,19 +93,16 @@ class VLoading {
         if(y >= max) {
           y = (y - max) / 2;
           setBorder(topLoading, { y, bg });
-          stage2Begin(topLoading, { y, bg });
+          t_stage2Begin(topLoading, { y, bg });
         } else {
           setHeight(topLoading, { y, bg });
-          stage1Begin(topLoading, { y, bg });
+          t_stage1Begin(topLoading, { y, bg });
         }
       }
       if(data.bottom) {
-        setStyle(bottomLoading, {
-          visibility: "visible"
-        });
+        e.preventDefault();
+        b_stage2Begin(bottomLoading);
       }
-
-      // }
     }, {passive: false});
     ele.addEventListener("touchend", (e) => {
       updateDataInCancel(data, e, this.options);
@@ -117,26 +116,34 @@ class VLoading {
           let y = data.y;
           if(y > max) {
             clearBorder(topLoading,null, duration);
-            stage2End(topLoading);
-            cb(
+            t_stage2End(topLoading);
+            t_cb(
               (flag) => {
-                stage1End(topLoading,flag);
+                t_stage1End(topLoading,flag);
                 setTimeout(() => {
                   clearHeight(topLoading, data, duration);
                 }, time);
               }
             );
           } else {
-            // stage1End(topLoading);
+            t_stage1QuickEnd(topLoading);
             clearBorder(topLoading, data, duration);
             clearHeight(topLoading, data, duration);
           }
         }
         if(data.bottom) {
-          setStyle(bottomLoading, {
-            visibility: "hidden"
+          b_stage1End(bottomLoading);
+          b_cb((flag) => {
+            b_stage2End(bottomLoading, flag);
+            if(flag) {
+              setTimeout(() => {
+                setStyle(bottomLoading, {
+                  visibility: "hidden"
+                });
+              }, time);
+            }
+            data.phase = -1;
           });
-          data.phase = -1;
         }
       }
     });
