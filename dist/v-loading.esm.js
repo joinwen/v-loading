@@ -1,10 +1,16 @@
 const setStyle = (ele, obj) => {
   for (const key of Object.keys(obj)) {
-    ele.style[key] = `${obj[key]}`;
+    let value = `${obj[key]}`,
+      type = "style";
+    if(key === "text")
+      type = "innerText";
+    if(key === "html")
+      type = "innerHTML";
+    if(typeof ele[type] === "object")
+      ele[type][key] = value;
+    else
+      ele[type] = value;
   }
-};
-const getStyle = (ele, attr) => {
-  return document.defaultView.getComputedStyle(ele)[attr];
 };
 
 const clearBorder = (ele, data, duration = 600) => {
@@ -21,10 +27,8 @@ const clearBorder = (ele, data, duration = 600) => {
 };
 
 const clearHeight = (ele, data, duration = 600) => {
-  let color = getStyle(ele, "backgroundColor");
   setStyle(ele, {
     height: "0",
-    background: color,
     transition: `height ${duration}ms`
   });
   setTimeout(() => {
@@ -35,45 +39,62 @@ const clearHeight = (ele, data, duration = 600) => {
   }, duration);
 };
 
-const clearLoadingImg = (ele) => {
+const setBorder = (ele, obj, color = "#f0f0f0") => {
+  let { y, bg } = obj;
+  bg = bg || color;
   setStyle(ele, {
-    background: "none"
-  });
-};
-
-const setBorder = (ele, value, color = "#f0f0f0") => {
-  setStyle(ele, {
-    "borderBottom": `${value}px solid ${color}`,
+    "borderBottom": `${y}px solid ${bg}`,
     transition: "none",
   });
 };
 
-const setHeight = (ele, value, color ="#f0f0f0") => {
+const setHeight = (ele, obj, color ="#f0f0f0") => {
+  let { y, bg } = obj;
+  bg = bg || color;
   setStyle(ele, {
-    height: `${value}px`,
-    background: color,
+    height: `${y}px`,
+    background: bg,
     transition: "none"
   });
 };
 
-const setLoadingImg = (ele, src="./loading.gif") => {
-  let color = getStyle(ele, "backgroundColor");
-  setStyle(ele, {
-    background: `url(${src}) center/4em no-repeat ${color}`
-  });
-};
-
 const defaultOptions = {
+  time: 300,
   max: 80,
   bg: "#f0f0f0",
   cb: () => {},
-  stage1Begin: () => {},
-  stage2Begin: (ele) => {
-    setLoadingImg(ele);
+  stage1Begin: (ele, obj) => {
+    // eslint-disable-next-line no-unused-vars
+    let { y, bg } = obj;
+    setStyle(ele, {
+      text: "下拉刷新",
+      color: "#67c23a",
+      textAlign: "center",
+      lineHeight: `${y}px`
+    });
   },
-  stage1End: () => {},
-  stage2End: () => {
-    clearLoadingImg(ele);
+  // eslint-disable-next-line no-unused-vars
+  stage2Begin: (ele, obj) => {
+    setStyle(ele, {
+      text: "松开刷新"
+    });
+  },
+  stage1End: (ele, flag) => {
+    if(flag) {
+      setStyle(ele, {
+        text: "刷新成功"
+      });
+    } else {
+      setStyle(ele,{
+        text: "刷新失败",
+        color: "#f56c6c"
+      });
+    }
+  },
+  stage2End: (ele) => {
+    setStyle(ele, {
+      text: "刷新中..."
+    });
   },
   stage2: () => {},
   duration: 250,
@@ -156,6 +177,9 @@ class VLoading {
       return;
     let firstNode = this.ele.firstElementChild,
       div = document.createElement("div");
+    setStyle(div, {
+      overflow: "hidden"
+    });
     this.ele.insertBefore(div, firstNode);
     this.options.topLoading = div;
   }
@@ -165,6 +189,12 @@ class VLoading {
       return;
     let lastNode = this.ele.lastElementChild,
       div = document.createElement("div");
+    div.innerText = "上拉加载中...";
+    setStyle(div, {
+      lineHeight: 2,
+      textAlign: "center",
+      visibility: "hidden"
+    });
     this.ele.insertBefore(div, lastNode.nextSibling);
     this.options.bottomLoading = div;
   }
@@ -176,11 +206,12 @@ class VLoading {
       cb = this.options.cb,
       max = this.options.max,
       bg = this.options.bg,
+      time = this.options.time,
       duration = this.options.duration,
       stage1Begin = this.options.stage1Begin,
       stage2Begin = this.options.stage2Begin,
       stage1End = this.options.stage1End,
-      stage2End = this.options.stage1End;
+      stage2End = this.options.stage2End;
     window.data = data;
     ele.addEventListener("touchstart", (e) => {
       updateDataInStart(data, e, this.options);
@@ -203,24 +234,17 @@ class VLoading {
 
         if(y >= max) {
           y = (y - max) / 2;
-          stage2Begin(topLoading);
-          setBorder(topLoading, y, bg);
+          setBorder(topLoading, { y, bg });
+          stage2Begin(topLoading, { y, bg });
         } else {
-          stage1Begin(topLoading);
-          setHeight(topLoading, y, bg);
+          setHeight(topLoading, { y, bg });
+          stage1Begin(topLoading, { y, bg });
         }
       }
       if(data.bottom) {
-        // e.preventDefault();
-        let y = -data.y;
-        if(y >= max) {
-          y = (y - max) / 2;
-          stage2Begin(bottomLoading);
-          setBorder(bottomLoading, y, bg);
-        } else {
-          stage1Begin(bottomLoading);
-          setHeight(bottomLoading, y, bg);
-        }
+        setStyle(bottomLoading, {
+          visibility: "visible"
+        });
       }
 
       // }
@@ -237,24 +261,26 @@ class VLoading {
           let y = data.y;
           if(y > max) {
             clearBorder(topLoading,null, duration);
-            cb(() => {stage2End(topLoading);clearHeight(topLoading, data, duration);});
+            stage2End(topLoading);
+            cb(
+              (flag) => {
+                stage1End(topLoading,flag);
+                setTimeout(() => {
+                  clearHeight(topLoading, data, duration);
+                }, time);
+              }
+            );
           } else {
-            stage1End(topLoading);
+            // stage1End(topLoading);
             clearBorder(topLoading, data, duration);
             clearHeight(topLoading, data, duration);
           }
-        } else {
-          // if(data.bottom) {
-            let y = -data.y;
-            if(y > max) {
-              clearBorder(bottomLoading,null, duration);
-              cb(() => {stage2End(bottomLoading);clearHeight(bottomLoading, data, duration);});
-            } else {
-              stage1End(bottomLoading);
-              clearBorder(bottomLoading, data, duration);
-              clearHeight(bottomLoading, data, duration);
-            }
-          // }
+        }
+        if(data.bottom) {
+          setStyle(bottomLoading, {
+            visibility: "hidden"
+          });
+          data.phase = -1;
         }
       }
     });

@@ -1,5 +1,11 @@
 import {defaultOptions} from "./default";
-import {clearBorder, clearHeight, clearLoadingImg, setBorder, setHeight, setLoadingImg, damp} from "../utils/index";
+import {
+  clearBorder,
+  clearHeight,
+  setBorder,
+  setHeight,
+  setStyle
+} from "../utils/index";
 import {
   updateDataInStart,
   updateDataInMove,
@@ -16,7 +22,7 @@ class VLoading {
       y: 0,           // 路程位移
       start: 0,       // 起点位移
       phase: -1,      // 0:touchstart, 1:touchmove, 2:touchend/cancel, -1, no events
-    }
+    };
     this.insertTopLoading();
     this.insertBottomLoading();
     this.init();
@@ -27,6 +33,9 @@ class VLoading {
       return;
     let firstNode = this.ele.firstElementChild,
       div = document.createElement("div");
+    setStyle(div, {
+      overflow: "hidden"
+    });
     this.ele.insertBefore(div, firstNode);
     this.options.topLoading = div;
   }
@@ -36,6 +45,12 @@ class VLoading {
       return;
     let lastNode = this.ele.lastElementChild,
       div = document.createElement("div");
+    div.innerText = "上拉加载中...";
+    setStyle(div, {
+      lineHeight: 2,
+      textAlign: "center",
+      visibility: "hidden"
+    });
     this.ele.insertBefore(div, lastNode.nextSibling);
     this.options.bottomLoading = div;
   }
@@ -47,15 +62,16 @@ class VLoading {
       cb = this.options.cb,
       max = this.options.max,
       bg = this.options.bg,
+      time = this.options.time,
       duration = this.options.duration,
       stage1Begin = this.options.stage1Begin,
       stage2Begin = this.options.stage2Begin,
       stage1End = this.options.stage1End,
-      stage2End = this.options.stage1End;
+      stage2End = this.options.stage2End;
     window.data = data;
     ele.addEventListener("touchstart", (e) => {
       updateDataInStart(data, e, this.options);
-    })
+    });
 
     ele.addEventListener("touchmove", (e) => {
       updateDataInMove(data, e, this.options);
@@ -74,28 +90,21 @@ class VLoading {
 
         if(y >= max) {
           y = (y - max) / 2;
-          stage2Begin(topLoading);
-          setBorder(topLoading, y, bg);
+          setBorder(topLoading, { y, bg });
+          stage2Begin(topLoading, { y, bg });
         } else {
-          stage1Begin(topLoading);
-          setHeight(topLoading, y, bg);
+          setHeight(topLoading, { y, bg });
+          stage1Begin(topLoading, { y, bg });
         }
       }
       if(data.bottom) {
-        // e.preventDefault();
-        let y = -data.y;
-        if(y >= max) {
-          y = (y - max) / 2;
-          stage2Begin(bottomLoading);
-          setBorder(bottomLoading, y, bg);
-        } else {
-          stage1Begin(bottomLoading);
-          setHeight(bottomLoading, y, bg);
-        }
+        setStyle(bottomLoading, {
+          visibility: "visible"
+        });
       }
 
       // }
-    }, {passive: false})
+    }, {passive: false});
     ele.addEventListener("touchend", (e) => {
       updateDataInCancel(data, e, this.options);
       if(data.phase === 0) {
@@ -108,29 +117,31 @@ class VLoading {
           let y = data.y;
           if(y > max) {
             clearBorder(topLoading,null, duration);
-            cb(() => {stage2End(topLoading);clearHeight(topLoading, data, duration)});
+            stage2End(topLoading);
+            cb(
+              (flag) => {
+                stage1End(topLoading,flag);
+                setTimeout(() => {
+                  clearHeight(topLoading, data, duration);
+                }, time);
+              }
+            );
           } else {
-            stage1End(topLoading);
+            // stage1End(topLoading);
             clearBorder(topLoading, data, duration);
             clearHeight(topLoading, data, duration);
           }
-        } else {
-          // if(data.bottom) {
-            let y = -data.y;
-            if(y > max) {
-              clearBorder(bottomLoading,null, duration);
-              cb(() => {stage2End(bottomLoading);clearHeight(bottomLoading, data, duration)});
-            } else {
-              stage1End(bottomLoading);
-              clearBorder(bottomLoading, data, duration);
-              clearHeight(bottomLoading, data, duration);
-            }
-          // }
+        }
+        if(data.bottom) {
+          setStyle(bottomLoading, {
+            visibility: "hidden"
+          });
+          data.phase = -1;
         }
       }
-    })
+    });
     ele.addEventListener("touchcancel", (e) => {
-    })
+    });
   }
 }
 export default VLoading;

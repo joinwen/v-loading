@@ -38,13 +38,12 @@
     new VL(document.documentElement,{
       topLoading: loading,
       max: 80,
-      bg: "#69aef1",
       cb: (fn) => {
         setTimeout(() => {
           let html = content.innerHTML;
           content.innerHTML = `${Date.now()}-` + html;
           fn();
-        },1000)
+        },2000)
       }
     })
   </script>

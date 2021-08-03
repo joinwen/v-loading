@@ -403,9 +403,9 @@
 
   if (Object$1.defineProperty.sham) defineProperty$5.sham = true;
 
-  var parent$7 = defineProperty$6.exports;
+  var parent$8 = defineProperty$6.exports;
 
-  var defineProperty$4 = parent$7;
+  var defineProperty$4 = parent$8;
 
   var defineProperty$3 = defineProperty$4;
 
@@ -605,38 +605,13 @@
 
   var assign$2 = path$8.Object.assign;
 
-  var parent$6 = assign$2;
+  var parent$7 = assign$2;
 
-  var assign$1 = parent$6;
+  var assign$1 = parent$7;
 
   var assign = assign$1;
 
-  var $$7 = _export;
-  var toObject$5 = toObject$8;
-  var nativeKeys = objectKeys$3;
-  var fails$6 = fails$c;
-
-  var FAILS_ON_PRIMITIVES = fails$6(function () { nativeKeys(1); });
-
-  // `Object.keys` method
-  // https://tc39.es/ecma262/#sec-object.keys
-  $$7({ target: 'Object', stat: true, forced: FAILS_ON_PRIMITIVES }, {
-    keys: function keys(it) {
-      return nativeKeys(toObject$5(it));
-    }
-  });
-
   var path$7 = path$b;
-
-  var keys$3 = path$7.Object.keys;
-
-  var parent$5 = keys$3;
-
-  var keys$2 = parent$5;
-
-  var keys$1 = keys$2;
-
-  var path$6 = path$b;
   var global$b = global$e;
 
   var aFunction = function (variable) {
@@ -644,15 +619,15 @@
   };
 
   var getBuiltIn$3 = function (namespace, method) {
-    return arguments.length < 2 ? aFunction(path$6[namespace]) || aFunction(global$b[namespace])
-      : path$6[namespace] && path$6[namespace][method] || global$b[namespace] && global$b[namespace][method];
+    return arguments.length < 2 ? aFunction(path$7[namespace]) || aFunction(global$b[namespace])
+      : path$7[namespace] && path$7[namespace][method] || global$b[namespace] && global$b[namespace][method];
   };
 
   var getBuiltIn$2 = getBuiltIn$3;
 
   var engineUserAgent = getBuiltIn$2('navigator', 'userAgent') || '';
 
-  var $$6 = _export;
+  var $$7 = _export;
   var global$a = global$e;
   var userAgent$1 = engineUserAgent;
 
@@ -672,7 +647,7 @@
 
   // ie9- setTimeout & setInterval additional parameters fix
   // https://html.spec.whatwg.org/multipage/timers-and-user-prompts.html#timers
-  $$6({ global: true, bind: true, forced: MSIE }, {
+  $$7({ global: true, bind: true, forced: MSIE }, {
     // `setTimeout` method
     // https://html.spec.whatwg.org/multipage/timers-and-user-prompts.html#dom-settimeout
     setTimeout: wrap$1(global$a.setTimeout),
@@ -681,9 +656,9 @@
     setInterval: wrap$1(global$a.setInterval)
   });
 
-  var path$5 = path$b;
+  var path$6 = path$b;
 
-  var setTimeout$1 = path$5.setTimeout;
+  var setTimeout$1 = path$6.setTimeout;
 
   var setTimeout = setTimeout$1;
 
@@ -768,10 +743,10 @@
   /* eslint-disable es/no-symbol -- required for testing */
 
   var V8_VERSION$2 = engineV8Version;
-  var fails$5 = fails$c;
+  var fails$6 = fails$c;
 
   // eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
-  var nativeSymbol = !!Object.getOwnPropertySymbols && !fails$5(function () {
+  var nativeSymbol = !!Object.getOwnPropertySymbols && !fails$6(function () {
     var symbol = Symbol();
     // Chrome 38 Symbol has incorrect toString conversion
     // `get-own-property-symbols` polyfill symbols converted to object are not Symbol instances
@@ -830,7 +805,7 @@
     } return new (C === undefined ? Array : C)(length === 0 ? 0 : length);
   };
 
-  var fails$4 = fails$c;
+  var fails$5 = fails$c;
   var wellKnownSymbol$d = wellKnownSymbol$f;
   var V8_VERSION$1 = engineV8Version;
 
@@ -840,7 +815,7 @@
     // We can't use this feature detection in V8 since it causes
     // deoptimization and serious performance degradation
     // https://github.com/zloirock/core-js/issues/677
-    return V8_VERSION$1 >= 51 || !fails$4(function () {
+    return V8_VERSION$1 >= 51 || !fails$5(function () {
       var array = [];
       var constructor = array.constructor = {};
       constructor[SPECIES$1] = function () {
@@ -850,11 +825,11 @@
     });
   };
 
-  var $$5 = _export;
-  var fails$3 = fails$c;
+  var $$6 = _export;
+  var fails$4 = fails$c;
   var isArray$6 = isArray$8;
   var isObject$4 = isObject$9;
-  var toObject$4 = toObject$8;
+  var toObject$5 = toObject$8;
   var toLength$3 = toLength$5;
   var createProperty$2 = createProperty$3;
   var arraySpeciesCreate$1 = arraySpeciesCreate$2;
@@ -869,7 +844,7 @@
   // We can't use this feature detection in V8 since it causes
   // deoptimization and serious performance degradation
   // https://github.com/zloirock/core-js/issues/679
-  var IS_CONCAT_SPREADABLE_SUPPORT = V8_VERSION >= 51 || !fails$3(function () {
+  var IS_CONCAT_SPREADABLE_SUPPORT = V8_VERSION >= 51 || !fails$4(function () {
     var array = [];
     array[IS_CONCAT_SPREADABLE] = false;
     return array.concat()[0] !== array;
@@ -888,10 +863,10 @@
   // `Array.prototype.concat` method
   // https://tc39.es/ecma262/#sec-array.prototype.concat
   // with adding support of @@isConcatSpreadable and @@species
-  $$5({ target: 'Array', proto: true, forced: FORCED }, {
+  $$6({ target: 'Array', proto: true, forced: FORCED }, {
     // eslint-disable-next-line no-unused-vars -- required for `.length`
     concat: function concat(arg) {
-      var O = toObject$4(this);
+      var O = toObject$5(this);
       var A = arraySpeciesCreate$1(O, 0);
       var n = 0;
       var i, k, length, len, E;
@@ -910,148 +885,6 @@
       return A;
     }
   });
-
-  var path$4 = path$b;
-
-  var entryVirtual$2 = function (CONSTRUCTOR) {
-    return path$4[CONSTRUCTOR + 'Prototype'];
-  };
-
-  var entryVirtual$1 = entryVirtual$2;
-
-  var concat$3 = entryVirtual$1('Array').concat;
-
-  var concat$2 = concat$3;
-
-  var ArrayPrototype$2 = Array.prototype;
-
-  var concat_1 = function (it) {
-    var own = it.concat;
-    return it === ArrayPrototype$2 || (it instanceof Array && own === ArrayPrototype$2.concat) ? concat$2 : own;
-  };
-
-  var parent$4 = concat_1;
-
-  var concat$1 = parent$4;
-
-  var concat = concat$1;
-
-  var setStyle = function setStyle(ele, obj) {
-    for (var _i = 0, _Object$keys = keys$1(obj); _i < _Object$keys.length; _i++) {
-      var key = _Object$keys[_i];
-      ele.style[key] = "".concat(obj[key]);
-    }
-  };
-
-  var getStyle = function getStyle(ele, attr) {
-    return document.defaultView.getComputedStyle(ele)[attr];
-  };
-
-  var clearBorder = function clearBorder(ele, data) {
-    var duration = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 600;
-    setStyle(ele, {
-      "borderBottom": "0 solid transparent",
-      "transition": "border-bottom ".concat(duration, "ms")
-    });
-
-    setTimeout(function () {
-      setStyle(ele, {
-        "transition": "none"
-      });
-      data && (data.phase = -1);
-    }, duration);
-  };
-
-  var clearHeight = function clearHeight(ele, data) {
-    var duration = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 600;
-    var color = getStyle(ele, "backgroundColor");
-    setStyle(ele, {
-      height: "0",
-      background: color,
-      transition: "height ".concat(duration, "ms")
-    });
-
-    setTimeout(function () {
-      setStyle(ele, {
-        "transition": "none"
-      });
-      data && (data.phase = -1);
-    }, duration);
-  };
-
-  var clearLoadingImg = function clearLoadingImg(ele) {
-    setStyle(ele, {
-      background: "none"
-    });
-  };
-
-  var setBorder = function setBorder(ele, value) {
-    var _context;
-
-    var color = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "#f0f0f0";
-    setStyle(ele, {
-      "borderBottom": concat(_context = "".concat(value, "px solid ")).call(_context, color),
-      transition: "none"
-    });
-  };
-
-  var setHeight = function setHeight(ele, value) {
-    var color = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "#f0f0f0";
-    setStyle(ele, {
-      height: "".concat(value, "px"),
-      background: color,
-      transition: "none"
-    });
-  };
-
-  var setLoadingImg = function setLoadingImg(ele) {
-    var _context2;
-
-    var src = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "./loading.gif";
-    var color = getStyle(ele, "backgroundColor");
-    setStyle(ele, {
-      background: concat(_context2 = "url(".concat(src, ") center/4em no-repeat ")).call(_context2, color)
-    });
-  };
-
-  var defaultOptions = {
-    max: 80,
-    bg: "#f0f0f0",
-    cb: function cb() {},
-    stage1Begin: function stage1Begin() {},
-    stage2Begin: function stage2Begin(ele) {
-      setLoadingImg(ele);
-    },
-    stage1End: function stage1End() {},
-    stage2End: function stage2End() {
-      clearLoadingImg(ele);
-    },
-    stage2: function stage2() {},
-    duration: 250
-  };
-
-  var $$4 = _export;
-  var isArray$5 = isArray$8;
-
-  // `Array.isArray` method
-  // https://tc39.es/ecma262/#sec-array.isarray
-  $$4({ target: 'Array', stat: true }, {
-    isArray: isArray$5
-  });
-
-  var path$3 = path$b;
-
-  var isArray$4 = path$3.Array.isArray;
-
-  var parent$3 = isArray$4;
-
-  var isArray$3 = parent$3;
-
-  var isArray$2 = isArray$3;
-
-  function _arrayWithHoles(arr) {
-    if (isArray$2(arr)) return arr;
-  }
 
   var DESCRIPTORS$1 = descriptors;
   var definePropertyModule$1 = objectDefineProperty;
@@ -1078,10 +911,10 @@
   var shared$2 = shared$4.exports;
   var uid$1 = uid$3;
 
-  var keys = shared$2('keys');
+  var keys$3 = shared$2('keys');
 
   var sharedKey$4 = function (key) {
-    return keys[key] || (keys[key] = uid$1(key));
+    return keys$3[key] || (keys$3[key] = uid$1(key));
   };
 
   var anObject$4 = anObject$7;
@@ -1217,13 +1050,13 @@
 
   wellKnownSymbolWrapped.f = wellKnownSymbol$b;
 
-  var path$2 = path$b;
+  var path$5 = path$b;
   var has$5 = has$a;
   var wrappedWellKnownSymbolModule$1 = wellKnownSymbolWrapped;
   var defineProperty$1 = objectDefineProperty.f;
 
   var defineWellKnownSymbol$l = function (NAME) {
-    var Symbol = path$2.Symbol || (path$2.Symbol = {});
+    var Symbol = path$5.Symbol || (path$5.Symbol = {});
     if (!has$5(Symbol, NAME)) defineProperty$1(Symbol, NAME, {
       value: wrappedWellKnownSymbolModule$1.f(NAME)
     });
@@ -1385,7 +1218,7 @@
 
   var bind$1 = functionBindContext;
   var IndexedObject = indexedObject;
-  var toObject$3 = toObject$8;
+  var toObject$4 = toObject$8;
   var toLength$2 = toLength$5;
   var arraySpeciesCreate = arraySpeciesCreate$2;
 
@@ -1401,7 +1234,7 @@
     var IS_FILTER_OUT = TYPE == 7;
     var NO_HOLES = TYPE == 5 || IS_FIND_INDEX;
     return function ($this, callbackfn, that, specificCreate) {
-      var O = toObject$3($this);
+      var O = toObject$4($this);
       var self = IndexedObject(O);
       var boundFunction = bind$1(callbackfn, that, 3);
       var length = toLength$2(self.length);
@@ -1456,18 +1289,18 @@
     filterOut: createMethod$1(7)
   };
 
-  var $$3 = _export;
+  var $$5 = _export;
   var global$3 = global$e;
   var getBuiltIn = getBuiltIn$3;
   var DESCRIPTORS = descriptors;
   var NATIVE_SYMBOL = nativeSymbol;
   var USE_SYMBOL_AS_UID = useSymbolAsUid;
-  var fails$2 = fails$c;
+  var fails$3 = fails$c;
   var has$2 = has$a;
-  var isArray$1 = isArray$8;
+  var isArray$5 = isArray$8;
   var isObject$2 = isObject$9;
   var anObject$3 = anObject$7;
-  var toObject$2 = toObject$8;
+  var toObject$3 = toObject$8;
   var toIndexedObject$2 = toIndexedObject$7;
   var toPrimitive = toPrimitive$4;
   var createPropertyDescriptor$1 = createPropertyDescriptor$5;
@@ -1515,7 +1348,7 @@
   var USE_SETTER = !QObject || !QObject[PROTOTYPE] || !QObject[PROTOTYPE].findChild;
 
   // fallback for old Android, https://code.google.com/p/v8/issues/detail?id=687
-  var setSymbolDescriptor = DESCRIPTORS && fails$2(function () {
+  var setSymbolDescriptor = DESCRIPTORS && fails$3(function () {
     return nativeObjectCreate(nativeDefineProperty({}, 'a', {
       get: function () { return nativeDefineProperty(this, 'a', { value: 7 }).a; }
     })).a != 7;
@@ -1659,7 +1492,7 @@
     }
   }
 
-  $$3({ global: true, wrap: true, forced: !NATIVE_SYMBOL, sham: !NATIVE_SYMBOL }, {
+  $$5({ global: true, wrap: true, forced: !NATIVE_SYMBOL, sham: !NATIVE_SYMBOL }, {
     Symbol: $Symbol
   });
 
@@ -1667,7 +1500,7 @@
     defineWellKnownSymbol$k(name);
   });
 
-  $$3({ target: SYMBOL, stat: true, forced: !NATIVE_SYMBOL }, {
+  $$5({ target: SYMBOL, stat: true, forced: !NATIVE_SYMBOL }, {
     // `Symbol.for` method
     // https://tc39.es/ecma262/#sec-symbol.for
     'for': function (key) {
@@ -1688,7 +1521,7 @@
     useSimple: function () { USE_SETTER = false; }
   });
 
-  $$3({ target: 'Object', stat: true, forced: !NATIVE_SYMBOL, sham: !DESCRIPTORS }, {
+  $$5({ target: 'Object', stat: true, forced: !NATIVE_SYMBOL, sham: !DESCRIPTORS }, {
     // `Object.create` method
     // https://tc39.es/ecma262/#sec-object.create
     create: $create,
@@ -1703,7 +1536,7 @@
     getOwnPropertyDescriptor: $getOwnPropertyDescriptor
   });
 
-  $$3({ target: 'Object', stat: true, forced: !NATIVE_SYMBOL }, {
+  $$5({ target: 'Object', stat: true, forced: !NATIVE_SYMBOL }, {
     // `Object.getOwnPropertyNames` method
     // https://tc39.es/ecma262/#sec-object.getownpropertynames
     getOwnPropertyNames: $getOwnPropertyNames,
@@ -1714,16 +1547,16 @@
 
   // Chrome 38 and 39 `Object.getOwnPropertySymbols` fails on primitives
   // https://bugs.chromium.org/p/v8/issues/detail?id=3443
-  $$3({ target: 'Object', stat: true, forced: fails$2(function () { getOwnPropertySymbolsModule.f(1); }) }, {
+  $$5({ target: 'Object', stat: true, forced: fails$3(function () { getOwnPropertySymbolsModule.f(1); }) }, {
     getOwnPropertySymbols: function getOwnPropertySymbols(it) {
-      return getOwnPropertySymbolsModule.f(toObject$2(it));
+      return getOwnPropertySymbolsModule.f(toObject$3(it));
     }
   });
 
   // `JSON.stringify` method behavior with symbols
   // https://tc39.es/ecma262/#sec-json.stringify
   if ($stringify) {
-    var FORCED_JSON_STRINGIFY = !NATIVE_SYMBOL || fails$2(function () {
+    var FORCED_JSON_STRINGIFY = !NATIVE_SYMBOL || fails$3(function () {
       var symbol = $Symbol();
       // MS Edge converts symbol values to JSON as {}
       return $stringify([symbol]) != '[null]'
@@ -1733,7 +1566,7 @@
         || $stringify(Object(symbol)) != '{}';
     });
 
-    $$3({ target: 'JSON', stat: true, forced: FORCED_JSON_STRINGIFY }, {
+    $$5({ target: 'JSON', stat: true, forced: FORCED_JSON_STRINGIFY }, {
       // eslint-disable-next-line no-unused-vars -- required for `.length`
       stringify: function stringify(it, replacer, space) {
         var args = [it];
@@ -1742,7 +1575,7 @@
         while (arguments.length > index) args.push(arguments[index++]);
         $replacer = replacer;
         if (!isObject$2(replacer) && it === undefined || isSymbol(it)) return; // IE8 returns string on undefined
-        if (!isArray$1(replacer)) replacer = function (key, value) {
+        if (!isArray$5(replacer)) replacer = function (key, value) {
           if (typeof $replacer == 'function') value = $replacer.call(this, key, value);
           if (!isSymbol(value)) return value;
         };
@@ -1848,9 +1681,9 @@
   // https://tc39.es/ecma262/#sec-json-@@tostringtag
   setToStringTag$2(global$2.JSON, 'JSON', true);
 
-  var path$1 = path$b;
+  var path$4 = path$b;
 
-  var symbol$2 = path$1.Symbol;
+  var symbol$2 = path$4.Symbol;
 
   var defineWellKnownSymbol$6 = defineWellKnownSymbol$l;
 
@@ -1894,7 +1727,7 @@
 
   defineWellKnownSymbol('replaceAll');
 
-  var parent$2 = symbol$2;
+  var parent$6 = symbol$2;
 
 
 
@@ -1905,15 +1738,41 @@
   // TODO: Remove from `core-js@4`
 
 
-  var symbol$1 = parent$2;
+  var symbol$1 = parent$6;
 
   var symbol = symbol$1;
 
-  var iterators = {};
+  var toInteger = toInteger$3;
+  var requireObjectCoercible = requireObjectCoercible$3;
 
-  var fails$1 = fails$c;
+  // `String.prototype.{ codePointAt, at }` methods implementation
+  var createMethod = function (CONVERT_TO_STRING) {
+    return function ($this, pos) {
+      var S = String(requireObjectCoercible($this));
+      var position = toInteger(pos);
+      var size = S.length;
+      var first, second;
+      if (position < 0 || position >= size) return CONVERT_TO_STRING ? '' : undefined;
+      first = S.charCodeAt(position);
+      return first < 0xD800 || first > 0xDBFF || position + 1 === size
+        || (second = S.charCodeAt(position + 1)) < 0xDC00 || second > 0xDFFF
+          ? CONVERT_TO_STRING ? S.charAt(position) : first
+          : CONVERT_TO_STRING ? S.slice(position, position + 2) : (first - 0xD800 << 10) + (second - 0xDC00) + 0x10000;
+    };
+  };
 
-  var correctPrototypeGetter = !fails$1(function () {
+  var stringMultibyte = {
+    // `String.prototype.codePointAt` method
+    // https://tc39.es/ecma262/#sec-string.prototype.codepointat
+    codeAt: createMethod(false),
+    // `String.prototype.at` method
+    // https://github.com/mathiasbynens/String.prototype.at
+    charAt: createMethod(true)
+  };
+
+  var fails$2 = fails$c;
+
+  var correctPrototypeGetter = !fails$2(function () {
     function F() { /* empty */ }
     F.prototype.constructor = null;
     // eslint-disable-next-line es/no-object-getprototypeof -- required for testing
@@ -1921,7 +1780,7 @@
   });
 
   var has$1 = has$a;
-  var toObject$1 = toObject$8;
+  var toObject$2 = toObject$8;
   var sharedKey = sharedKey$4;
   var CORRECT_PROTOTYPE_GETTER = correctPrototypeGetter;
 
@@ -1932,14 +1791,14 @@
   // https://tc39.es/ecma262/#sec-object.getprototypeof
   // eslint-disable-next-line es/no-object-getprototypeof -- safe
   var objectGetPrototypeOf = CORRECT_PROTOTYPE_GETTER ? Object.getPrototypeOf : function (O) {
-    O = toObject$1(O);
+    O = toObject$2(O);
     if (has$1(O, IE_PROTO)) return O[IE_PROTO];
     if (typeof O.constructor == 'function' && O instanceof O.constructor) {
       return O.constructor.prototype;
     } return O instanceof Object ? ObjectPrototype : null;
   };
 
-  var fails = fails$c;
+  var fails$1 = fails$c;
   var getPrototypeOf$1 = objectGetPrototypeOf;
   var createNonEnumerableProperty$2 = createNonEnumerableProperty$9;
   var has = has$a;
@@ -1965,7 +1824,7 @@
     }
   }
 
-  var NEW_ITERATOR_PROTOTYPE = IteratorPrototype$2 == undefined || fails(function () {
+  var NEW_ITERATOR_PROTOTYPE = IteratorPrototype$2 == undefined || fails$1(function () {
     var test = {};
     // FF44- legacy iterators case
     return IteratorPrototype$2[ITERATOR$4].call(test) !== test;
@@ -1983,6 +1842,8 @@
     IteratorPrototype: IteratorPrototype$2,
     BUGGY_SAFARI_ITERATORS: BUGGY_SAFARI_ITERATORS$1
   };
+
+  var iterators = {};
 
   var IteratorPrototype$1 = iteratorsCore.IteratorPrototype;
   var create = objectCreate;
@@ -2036,7 +1897,7 @@
     };
   }() : undefined);
 
-  var $$2 = _export;
+  var $$4 = _export;
   var createIteratorConstructor = createIteratorConstructor$1;
   var getPrototypeOf = objectGetPrototypeOf;
   var setToStringTag = setToStringTag$4;
@@ -2111,20 +1972,49 @@
         if (BUGGY_SAFARI_ITERATORS || INCORRECT_VALUES_NAME || !(KEY in IterablePrototype)) {
           redefine(IterablePrototype, KEY, methods[KEY]);
         }
-      } else $$2({ target: NAME, proto: true, forced: BUGGY_SAFARI_ITERATORS || INCORRECT_VALUES_NAME }, methods);
+      } else $$4({ target: NAME, proto: true, forced: BUGGY_SAFARI_ITERATORS || INCORRECT_VALUES_NAME }, methods);
     }
 
     return methods;
   };
 
-  var toIndexedObject$1 = toIndexedObject$7;
-  var Iterators$3 = iterators;
+  var charAt = stringMultibyte.charAt;
   var InternalStateModule$1 = internalState;
   var defineIterator$1 = defineIterator$2;
 
-  var ARRAY_ITERATOR = 'Array Iterator';
+  var STRING_ITERATOR = 'String Iterator';
   var setInternalState$1 = InternalStateModule$1.set;
-  var getInternalState$1 = InternalStateModule$1.getterFor(ARRAY_ITERATOR);
+  var getInternalState$1 = InternalStateModule$1.getterFor(STRING_ITERATOR);
+
+  // `String.prototype[@@iterator]` method
+  // https://tc39.es/ecma262/#sec-string.prototype-@@iterator
+  defineIterator$1(String, 'String', function (iterated) {
+    setInternalState$1(this, {
+      type: STRING_ITERATOR,
+      string: String(iterated),
+      index: 0
+    });
+  // `%StringIteratorPrototype%.next` method
+  // https://tc39.es/ecma262/#sec-%stringiteratorprototype%.next
+  }, function next() {
+    var state = getInternalState$1(this);
+    var string = state.string;
+    var index = state.index;
+    var point;
+    if (index >= string.length) return { value: undefined, done: true };
+    point = charAt(string, index);
+    state.index += point.length;
+    return { value: point, done: false };
+  });
+
+  var toIndexedObject$1 = toIndexedObject$7;
+  var Iterators$3 = iterators;
+  var InternalStateModule = internalState;
+  var defineIterator = defineIterator$2;
+
+  var ARRAY_ITERATOR = 'Array Iterator';
+  var setInternalState = InternalStateModule.set;
+  var getInternalState = InternalStateModule.getterFor(ARRAY_ITERATOR);
 
   // `Array.prototype.entries` method
   // https://tc39.es/ecma262/#sec-array.prototype.entries
@@ -2136,8 +2026,8 @@
   // https://tc39.es/ecma262/#sec-array.prototype-@@iterator
   // `CreateArrayIterator` internal method
   // https://tc39.es/ecma262/#sec-createarrayiterator
-  defineIterator$1(Array, 'Array', function (iterated, kind) {
-    setInternalState$1(this, {
+  defineIterator(Array, 'Array', function (iterated, kind) {
+    setInternalState(this, {
       type: ARRAY_ITERATOR,
       target: toIndexedObject$1(iterated), // target
       index: 0,                          // next index
@@ -2146,7 +2036,7 @@
   // `%ArrayIteratorPrototype%.next` method
   // https://tc39.es/ecma262/#sec-%arrayiteratorprototype%.next
   }, function () {
-    var state = getInternalState$1(this);
+    var state = getInternalState(this);
     var target = state.target;
     var kind = state.kind;
     var index = state.index++;
@@ -2218,62 +2108,213 @@
     Iterators$2[COLLECTION_NAME] = Iterators$2.Array;
   }
 
-  var toInteger = toInteger$3;
-  var requireObjectCoercible = requireObjectCoercible$3;
+  var WrappedWellKnownSymbolModule = wellKnownSymbolWrapped;
 
-  // `String.prototype.{ codePointAt, at }` methods implementation
-  var createMethod = function (CONVERT_TO_STRING) {
-    return function ($this, pos) {
-      var S = String(requireObjectCoercible($this));
-      var position = toInteger(pos);
-      var size = S.length;
-      var first, second;
-      if (position < 0 || position >= size) return CONVERT_TO_STRING ? '' : undefined;
-      first = S.charCodeAt(position);
-      return first < 0xD800 || first > 0xDBFF || position + 1 === size
-        || (second = S.charCodeAt(position + 1)) < 0xDC00 || second > 0xDFFF
-          ? CONVERT_TO_STRING ? S.charAt(position) : first
-          : CONVERT_TO_STRING ? S.slice(position, position + 2) : (first - 0xD800 << 10) + (second - 0xDC00) + 0x10000;
-    };
-  };
+  var iterator$2 = WrappedWellKnownSymbolModule.f('iterator');
 
-  var stringMultibyte = {
-    // `String.prototype.codePointAt` method
-    // https://tc39.es/ecma262/#sec-string.prototype.codepointat
-    codeAt: createMethod(false),
-    // `String.prototype.at` method
-    // https://github.com/mathiasbynens/String.prototype.at
-    charAt: createMethod(true)
-  };
+  var parent$5 = iterator$2;
 
-  var charAt = stringMultibyte.charAt;
-  var InternalStateModule = internalState;
-  var defineIterator = defineIterator$2;
+  var iterator$1 = parent$5;
 
-  var STRING_ITERATOR = 'String Iterator';
-  var setInternalState = InternalStateModule.set;
-  var getInternalState = InternalStateModule.getterFor(STRING_ITERATOR);
+  var iterator = iterator$1;
 
-  // `String.prototype[@@iterator]` method
-  // https://tc39.es/ecma262/#sec-string.prototype-@@iterator
-  defineIterator(String, 'String', function (iterated) {
-    setInternalState(this, {
-      type: STRING_ITERATOR,
-      string: String(iterated),
-      index: 0
-    });
-  // `%StringIteratorPrototype%.next` method
-  // https://tc39.es/ecma262/#sec-%stringiteratorprototype%.next
-  }, function next() {
-    var state = getInternalState(this);
-    var string = state.string;
-    var index = state.index;
-    var point;
-    if (index >= string.length) return { value: undefined, done: true };
-    point = charAt(string, index);
-    state.index += point.length;
-    return { value: point, done: false };
+  function _typeof(obj) {
+    "@babel/helpers - typeof";
+
+    if (typeof symbol === "function" && typeof iterator === "symbol") {
+      _typeof = function _typeof(obj) {
+        return typeof obj;
+      };
+    } else {
+      _typeof = function _typeof(obj) {
+        return obj && typeof symbol === "function" && obj.constructor === symbol && obj !== symbol.prototype ? "symbol" : typeof obj;
+      };
+    }
+
+    return _typeof(obj);
+  }
+
+  var $$3 = _export;
+  var toObject$1 = toObject$8;
+  var nativeKeys = objectKeys$3;
+  var fails = fails$c;
+
+  var FAILS_ON_PRIMITIVES = fails(function () { nativeKeys(1); });
+
+  // `Object.keys` method
+  // https://tc39.es/ecma262/#sec-object.keys
+  $$3({ target: 'Object', stat: true, forced: FAILS_ON_PRIMITIVES }, {
+    keys: function keys(it) {
+      return nativeKeys(toObject$1(it));
+    }
   });
+
+  var path$3 = path$b;
+
+  var keys$2 = path$3.Object.keys;
+
+  var parent$4 = keys$2;
+
+  var keys$1 = parent$4;
+
+  var keys = keys$1;
+
+  var path$2 = path$b;
+
+  var entryVirtual$2 = function (CONSTRUCTOR) {
+    return path$2[CONSTRUCTOR + 'Prototype'];
+  };
+
+  var entryVirtual$1 = entryVirtual$2;
+
+  var concat$3 = entryVirtual$1('Array').concat;
+
+  var concat$2 = concat$3;
+
+  var ArrayPrototype$2 = Array.prototype;
+
+  var concat_1 = function (it) {
+    var own = it.concat;
+    return it === ArrayPrototype$2 || (it instanceof Array && own === ArrayPrototype$2.concat) ? concat$2 : own;
+  };
+
+  var parent$3 = concat_1;
+
+  var concat$1 = parent$3;
+
+  var concat = concat$1;
+
+  var setStyle = function setStyle(ele, obj) {
+    for (var _i = 0, _Object$keys = keys(obj); _i < _Object$keys.length; _i++) {
+      var key = _Object$keys[_i];
+      var value = "".concat(obj[key]),
+          type = "style";
+      if (key === "text") type = "innerText";
+      if (key === "html") type = "innerHTML";
+      if (_typeof(ele[type]) === "object") ele[type][key] = value;else ele[type] = value;
+    }
+  };
+
+  var clearBorder = function clearBorder(ele, data) {
+    var duration = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 600;
+    setStyle(ele, {
+      "borderBottom": "0 solid transparent",
+      "transition": "border-bottom ".concat(duration, "ms")
+    });
+
+    setTimeout(function () {
+      setStyle(ele, {
+        "transition": "none"
+      });
+      data && (data.phase = -1);
+    }, duration);
+  };
+
+  var clearHeight = function clearHeight(ele, data) {
+    var duration = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 600;
+    setStyle(ele, {
+      height: "0",
+      transition: "height ".concat(duration, "ms")
+    });
+
+    setTimeout(function () {
+      setStyle(ele, {
+        "transition": "none"
+      });
+      data && (data.phase = -1);
+    }, duration);
+  };
+
+  var setBorder = function setBorder(ele, obj) {
+    var _context;
+
+    var color = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "#f0f0f0";
+    var y = obj.y,
+        bg = obj.bg;
+    bg = bg || color;
+    setStyle(ele, {
+      "borderBottom": concat(_context = "".concat(y, "px solid ")).call(_context, bg),
+      transition: "none"
+    });
+  };
+
+  var setHeight = function setHeight(ele, obj) {
+    var color = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "#f0f0f0";
+    var y = obj.y,
+        bg = obj.bg;
+    bg = bg || color;
+    setStyle(ele, {
+      height: "".concat(y, "px"),
+      background: bg,
+      transition: "none"
+    });
+  };
+
+  var defaultOptions = {
+    time: 300,
+    max: 80,
+    bg: "#f0f0f0",
+    cb: function cb() {},
+    stage1Begin: function stage1Begin(ele, obj) {
+      // eslint-disable-next-line no-unused-vars
+      var y = obj.y;
+          obj.bg;
+      setStyle(ele, {
+        text: "下拉刷新",
+        color: "#67c23a",
+        textAlign: "center",
+        lineHeight: "".concat(y, "px")
+      });
+    },
+    // eslint-disable-next-line no-unused-vars
+    stage2Begin: function stage2Begin(ele, obj) {
+      setStyle(ele, {
+        text: "松开刷新"
+      });
+    },
+    stage1End: function stage1End(ele, flag) {
+      if (flag) {
+        setStyle(ele, {
+          text: "刷新成功"
+        });
+      } else {
+        setStyle(ele, {
+          text: "刷新失败",
+          color: "#f56c6c"
+        });
+      }
+    },
+    stage2End: function stage2End(ele) {
+      setStyle(ele, {
+        text: "刷新中..."
+      });
+    },
+    stage2: function stage2() {},
+    duration: 250
+  };
+
+  var $$2 = _export;
+  var isArray$4 = isArray$8;
+
+  // `Array.isArray` method
+  // https://tc39.es/ecma262/#sec-array.isarray
+  $$2({ target: 'Array', stat: true }, {
+    isArray: isArray$4
+  });
+
+  var path$1 = path$b;
+
+  var isArray$3 = path$1.Array.isArray;
+
+  var parent$2 = isArray$3;
+
+  var isArray$2 = parent$2;
+
+  var isArray$1 = isArray$2;
+
+  function _arrayWithHoles(arr) {
+    if (isArray$1(arr)) return arr;
+  }
 
   var classof = classof$3;
   var Iterators$1 = iterators;
@@ -2655,6 +2696,9 @@
         if (loading) return;
         var firstNode = this.ele.firstElementChild,
             div = document.createElement("div");
+        setStyle(div, {
+          overflow: "hidden"
+        });
         this.ele.insertBefore(div, firstNode);
         this.options.topLoading = div;
       }
@@ -2665,6 +2709,12 @@
         if (bottomLoading) return;
         var lastNode = this.ele.lastElementChild,
             div = document.createElement("div");
+        div.innerText = "上拉加载中...";
+        setStyle(div, {
+          lineHeight: 2,
+          textAlign: "center",
+          visibility: "hidden"
+        });
         this.ele.insertBefore(div, lastNode.nextSibling);
         this.options.bottomLoading = div;
       }
@@ -2680,11 +2730,12 @@
             cb = this.options.cb,
             max = this.options.max,
             bg = this.options.bg,
+            time = this.options.time,
             duration = this.options.duration,
             stage1Begin = this.options.stage1Begin,
             stage2Begin = this.options.stage2Begin,
             stage1End = this.options.stage1End,
-            stage2End = this.options.stage1End;
+            stage2End = this.options.stage2End;
         window.data = data;
         ele.addEventListener("touchstart", function (e) {
           updateDataInStart(data, e, _this.options);
@@ -2708,26 +2759,30 @@
 
             if (y >= max) {
               y = (y - max) / 2;
-              stage2Begin(topLoading);
-              setBorder(topLoading, y, bg);
+              setBorder(topLoading, {
+                y: y,
+                bg: bg
+              });
+              stage2Begin(topLoading, {
+                y: y,
+                bg: bg
+              });
             } else {
-              stage1Begin(topLoading);
-              setHeight(topLoading, y, bg);
+              setHeight(topLoading, {
+                y: y,
+                bg: bg
+              });
+              stage1Begin(topLoading, {
+                y: y,
+                bg: bg
+              });
             }
           }
 
           if (data.bottom) {
-            // e.preventDefault();
-            var _y = -data.y;
-
-            if (_y >= max) {
-              _y = (_y - max) / 2;
-              stage2Begin(bottomLoading);
-              setBorder(bottomLoading, _y, bg);
-            } else {
-              stage1Begin(bottomLoading);
-              setHeight(bottomLoading, _y, bg);
-            }
+            setStyle(bottomLoading, {
+              visibility: "visible"
+            });
           } // }
 
         }, {
@@ -2749,31 +2804,26 @@
 
               if (y > max) {
                 clearBorder(topLoading, null, duration);
-                cb(function () {
-                  stage2End(topLoading);
-                  clearHeight(topLoading, data, duration);
+                stage2End(topLoading);
+                cb(function (flag) {
+                  stage1End(topLoading, flag);
+
+                  setTimeout(function () {
+                    clearHeight(topLoading, data, duration);
+                  }, time);
                 });
               } else {
-                stage1End(topLoading);
+                // stage1End(topLoading);
                 clearBorder(topLoading, data, duration);
                 clearHeight(topLoading, data, duration);
               }
-            } else {
-              // if(data.bottom) {
-              var _y2 = -data.y;
+            }
 
-              if (_y2 > max) {
-                clearBorder(bottomLoading, null, duration);
-                cb(function () {
-                  stage2End(bottomLoading);
-                  clearHeight(bottomLoading, data, duration);
-                });
-              } else {
-                stage1End(bottomLoading);
-                clearBorder(bottomLoading, data, duration);
-                clearHeight(bottomLoading, data, duration);
-              } // }
-
+            if (data.bottom) {
+              setStyle(bottomLoading, {
+                visibility: "hidden"
+              });
+              data.phase = -1;
             }
           }
         });
