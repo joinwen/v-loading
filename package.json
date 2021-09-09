@@ -8,7 +8,8 @@
   "scripts": {
     "build": "rollup -c --environment BUILD:production",
     "dev": "rollup -c -w",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "gh-pages": "gh-pages -d example"
   },
   "repository": {
     "type": "git",
@@ -31,6 +32,7 @@
     "@rollup/plugin-commonjs": "^19.0.1",
     "@rollup/plugin-node-resolve": "^13.0.2",
     "eslint": "^7.32.0",
+    "gh-pages": "^3.2.3",
     "rollup": "^2.53.2",
     "rollup-plugin-terser": "^7.0.2"
   },
